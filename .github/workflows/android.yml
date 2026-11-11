@@ -1,3 +1,4 @@
+
 name: Build Albanian IPTV
 
 on:
@@ -30,9 +31,44 @@ jobs:
 
       - name: Fix Android configuration
         run: |
-          sed -i '/dependencies {/a\    implementation("com.google.android.material:material:1.12.0")' Albanian_IPTV_Android/app/build.gradle.kts
-          sed -i '/android {/a\    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }' Albanian_IPTV_Android/app/build.gradle.kts
-          sed -i 's/singleLine = true/setSingleLine(true)/' Albanian_IPTV_Android/app/src/main/java/com/albanianiptv/app/MainActivity.kt
+          cat > Albanian_IPTV_Android/app/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+
+          android {
+              namespace = "com.albanianiptv.app"
+              compileSdk = 35
+
+              defaultConfig {
+                  applicationId = "com.albanianiptv.app"
+                  minSdk = 23
+                  targetSdk = 35
+                  versionCode = 2
+                  versionName = "1.1"
+              }
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          }
+
+          dependencies {
+              implementation("androidx.core:core-ktx:1.15.0")
+              implementation("androidx.appcompat:appcompat:1.7.0")
+              implementation("androidx.media3:media3-exoplayer:1.5.1")
+              implementation("androidx.media3:media3-exoplayer-hls:1.5.1")
+              implementation("androidx.media3:media3-ui:1.5.1")
+          }
+          EOF
+
+          sed -i 's/^package com\.albanianiptv$/package com.albanianiptv.app/' Albanian_IPTV_Android/app/src/main/java/com/albanianiptv/app/MainActivity.kt
 
       - name: Build Android APK
         run: gradle -p Albanian_IPTV_Android assembleDebug
