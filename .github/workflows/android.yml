@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,12 +28,13 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Fix Java and Kotlin versions
+      - name: Fix Android configuration
         run: |
           sed -i '/dependencies {/a\    implementation("com.google.android.material:material:1.12.0")' Albanian_IPTV_Android/app/build.gradle.kts
           sed -i '/android {/a\    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }' Albanian_IPTV_Android/app/build.gradle.kts
-sed -i 's/singleLine = true/setSingleLine(true)/' Albanian_IPTV_Android/app/src/main/java/com/albanianiptv/app/MainActivity.kt
-      - name: Build APK
+          sed -i 's/singleLine = true/setSingleLine(true)/' Albanian_IPTV_Android/app/src/main/java/com/albanianiptv/app/MainActivity.kt
+
+      - name: Build Android APK
         run: gradle -p Albanian_IPTV_Android assembleDebug
 
       - name: Upload APK
