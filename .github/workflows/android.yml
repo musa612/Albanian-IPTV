@@ -16,10 +16,6 @@ jobs:
       - name: Unzip project
         run: unzip -o Albanian-IPTV-source.zip -d .
 
-      - name: Add Material library
-        run: |
-          sed -i '/dependencies {/a\    implementation("com.google.android.material:material:1.12.0")' Albanian_IPTV_Android/app/build.gradle.kts
-
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
@@ -31,9 +27,10 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Set Java and Kotlin target
+      - name: Fix Java and Kotlin versions
         run: |
-          sed -i '/android {/a\    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }' Albanian_IPTV_Android/app/build.gradle.kts
+          sed -i '/dependencies {/a\    implementation("com.google.android.material:material:1.12.0")' Albanian_IPTV_Android/app/build.gradle.kts
+          sed -i '/android {/a\    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }' Albanian_IPTV_Android/app/build.gradle.kts
 
       - name: Build APK
         run: gradle -p Albanian_IPTV_Android assembleDebug
